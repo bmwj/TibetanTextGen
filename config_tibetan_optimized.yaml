@@ -1,0 +1,182 @@
+# 输出设置
+coord_output: true # 输出字符坐标信息
+mask_output: true # 输出蒙版图像
+glyph_coord_output: true # 输出字形坐标信息
+glyph_mask_output: true # 输出字形蒙版图像
+
+# 图像基本设置
+vertical: false # 是否是垂直字体(藏文通常为水平排列)
+quality: [50, 95] # JPEG图片质量范围，最小50，最大95
+visibility_check: true # 是否检查字符可见性，确保生成的字符清晰可见
+
+# 图层设置
+midground: 0.25 # 中间层透明度(0-1之间，0为完全透明，1为完全不透明)
+midground_offset: # 中间层偏移设置
+  percents: [[-0.5, 0.5], [-0.5, 0.5]] # 中间层在x和y方向上的偏移范围百分比
+foreground_mask_pad: 5 # 前景蒙版填充像素数
+
+# 语料库设置
+corpus: # 语料配置
+  weights: [1, 0] # 不同语料源的权重比例
+  args:
+    # 主要语料库 - 使用您的藏文词汇文件
+    - paths: [tib_text/merged_output.txt] # 藏文词汇文件路径
+      weights: [1] # 语料库权重
+      min_length: 1 # 生成文本的最小长度(字符数)
+      max_length: 20 # 生成文本的最大长度(字符数)
+      textcase: [lower]  # 文本大小写设置(藏文没有大小写概念，所以保持小写)
+      augmentation: 0.1 # 字符增强概率
+      augmentation_length: [1, 20] # 字符增强时的长度范围
+    # 字符增强语料库 - 使用您的藏文字符集
+    - paths: [] # 字符集文件路径(当前为空)
+      weights: [] # 权重设置(当前为空)
+      min_length: 1 # 生成文本的最小长度(字符数)
+      max_length: 10 # 生成文本的最大长度(字符数)
+      textcase: [lower] # 文本大小写设置
+      augmentation: 0 # 字符增强概率
+      augmentation_charset: tib/dict.txt # 字符增强使用的字符集文件
+
+# 字体设置
+font:
+  paths: [tib/fount]  # 藏文字体文件目录路径
+  weights: [1] # 字体权重
+  size: [40, 80] # 字体大小范围，最小40像素，最大80像素
+  bold: 0.3 # 粗体字概率(0-1之间)
+
+# 纹理设置
+texture:
+  prob: 0.5 # 应用纹理的概率(0-1之间)
+  args:
+    paths: [resources/image] # 纹理图像文件目录路径
+    weights: [1] # 纹理权重
+    alpha: [0, 1] # 纹理透明度范围
+    grayscale: 0 # 是否转换为灰度图(0为否，1为是)
+    crop: 1 # 是否裁剪纹理(0为否，1为是)
+
+# 颜色映射设置(2种颜色)
+colormap2: # 颜色映射配置2
+  paths: [resources/colormap/iiit5k_gray.txt] # 颜色映射文件路径
+  weights: [1] # 颜色映射权重
+  k: 2 # 颜色数量
+  alpha: [1, 1] # 透明度范围
+  colorize: 1 # 是否着色(0为否，1为是)
+
+# 颜色映射设置(3种颜色)
+colormap3: # 颜色映射配置3
+  paths: [resources/colormap/iiit5k_gray.txt] # 颜色映射文件路径
+  weights: [1] # 颜色映射权重
+  k: 3 # 颜色数量
+  alpha: [1, 1] # 透明度范围
+  colorize: 1 # 是否着色(0为否，1为是)
+
+# 颜色设置
+color:
+  gray: [0, 255] # 灰度值范围，最小0(黑)，最大255(白)
+  alpha: [1, 1] # 透明度范围
+  colorize: 1 # 是否着色(0为否，1为是)
+
+# 形状变形设置
+shape:
+  prob: 1 # 应用形状变形的概率(0-1之间)
+  args:
+    weights: [1, 1] # 不同变形方式的权重
+    args:
+      # 弹性变形1
+      - alpha: [15, 30] # 变形强度范围
+        sigma: [4, 12] # 变形半径范围
+      # 弹性变形2
+      - alpha: [0, 2] # 变形强度范围
+        sigma: [0, 0.6] # 变形半径范围
+
+# 布局设置
+layout:
+  weights: [4, 1] # 不同布局方式的权重比例
+  args:
+    # 流式布局
+    - space: [-2, 5] # 字符间距范围
+      line_align: [middle] # 行对齐方式(middle为居中对齐)
+    # 曲线布局
+    - curve: [20, 40] # 曲率范围
+      space: [-2, 5] # 字符间距范围
+      convex: 0.5 # 凸面概率(0-1之间)
+      upward: 0.5 # 向上概率(0-1之间)
+
+# 样式效果设置
+style:
+  prob: 0.25 # 应用样式效果的概率(0-1之间)
+  args:
+    weights: [1, 2, 2] # 不同样式效果的权重比例
+    args:
+      # 文字边框效果
+      - size: [1, 12] # 边框大小范围
+        alpha: [1, 1] # 透明度范围
+        grayscale: 0 # 是否转换为灰度图(0为否，1为是)
+      # 文字阴影效果
+      - distance: [1, 6] # 阴影距离范围
+        angle: [0, 360] # 阴影角度范围(0-360度)
+        alpha: [0.3, 0.7] # 透明度范围
+        grayscale: 0 # 是否转换为灰度图(0为否，1为是)
+      # 文字挤压效果
+      - length: [1, 12] # 挤压长度范围
+        angle: [0, 360] # 挤压角度范围(0-360度)
+        alpha: [1, 1] # 透明度范围
+        grayscale: 0 # 是否转换为灰度图(0为否，1为是)
+
+# 变换设置
+transform:
+  prob: 1 # 应用变换的概率(0-1之间)
+  args:
+    weights: [1, 1, 1, 1, 1, 1, 2] # 不同变换方式的权重比例
+    args:
+      # X轴透视变换
+      - percents: [[0.5, 1], [1, 1]] # 透视百分比范围
+        aligns: [[0, 0], [0, 0]] # 对齐设置
+      # Y轴透视变换
+      - percents: [[1, 1], [0.5, 1]] # 透视百分比范围
+        aligns: [[0, 0], [0, 0]] # 对齐设置
+      # X轴梯形变换
+      - weights: [1, 0, 1, 0] # 梯形各角权重
+        percent: [0.75, 1] # 变换百分比范围
+        align: [-1, 1] # 对齐设置
+      # Y轴梯形变换
+      - weights: [0, 1, 0, 1] # 梯形各角权重
+        percent: [0.5, 1] # 变换百分比范围
+        align: [-1, 1] # 对齐设置
+      # X轴倾斜变换
+      - weights: [1, 0] # 倾斜方向权重
+        angle: [0, 30] # 倾斜角度范围(0-30度)
+        ccw: 0.5 # 逆时针概率(0-1之间)
+      # Y轴倾斜变换
+      - weights: [0, 1] # 倾斜方向权重
+        angle: [0, 10] # 倾斜角度范围(0-10度)
+        ccw: 0.5 # 逆时针概率(0-1之间)
+      # 旋转变换
+      - angle: [0, 10] # 旋转角度范围(0-10度)
+        ccw: 0.5 # 逆时针概率(0-1之间)
+
+# 填充设置
+pad:
+  prob: 1 # 应用填充的概率(0-1之间)
+  args:
+    pxs: [[0, 10], [0, 10], [0, 10], [0, 10]] # 四个边的填充像素范围[top, right, bottom, left]
+
+# 后处理设置
+postprocess:
+  args:
+    # 高斯噪声
+    - prob: 1 # 应用高斯噪声的概率(0-1之间)
+      args:
+        scale: [4, 8] # 噪声比例范围
+        per_channel: 0 # 是否按通道添加噪声(0为否，1为是)
+    # 高斯模糊
+    - prob: 0.9 # 应用高斯模糊的概率(0-1之间)
+      args:
+        sigma: [0, 2] # 模糊强度范围
+    # 重采样
+    - prob: 0.1 # 应用重采样的概率(0-1之间)
+      args:
+        size: [0.4, 0.4] # 重采样尺寸比例
+    # 中值滤波
+    - prob: 1 # 应用中值滤波的概率(0-1之间)
+      args:
+        k: [1, 1] # 滤波器核大小

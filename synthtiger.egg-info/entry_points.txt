@@ -1,0 +1,2 @@
+[console_scripts]
+synthtiger = synthtiger.main:main
